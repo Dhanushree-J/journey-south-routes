@@ -1,9 +1,39 @@
 
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { Moon, Sun } from "lucide-react";
 
 const Footer = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check for system preference or saved preference
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      document.documentElement.classList.add("dark");
+      setIsDarkMode(true);
+    } else {
+      document.documentElement.classList.remove("dark");
+      setIsDarkMode(false);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    if (document.documentElement.classList.contains("dark")) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+      setIsDarkMode(false);
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+      setIsDarkMode(true);
+    }
+  };
+
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
@@ -20,6 +50,12 @@ const Footer = () => {
               </Button>
               <Button variant="ghost" size="icon" className="text-white hover:text-blue-400">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+              </Button>
+              <Button onClick={toggleTheme} variant="ghost" size="icon" className="text-white hover:text-blue-400">
+                {isDarkMode ? 
+                  <Sun className="h-5 w-5" /> : 
+                  <Moon className="h-5 w-5" />
+                }
               </Button>
             </div>
           </div>
